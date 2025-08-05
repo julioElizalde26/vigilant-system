@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TuMarcaDigital - Marketing Innovador</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide-react@latest"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        @keyframes fade-in-up {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in-up {
+            animation: fade-in-up 0.8s ease-out forwards;
+            opacity: 0;
+        }
+        .animate-fade-in-up.delay-200 { animation-delay: 0.2s; }
+        .animate-fade-in-up.delay-400 { animation-delay: 0.4s; }
+        @keyframes bounce-slow {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .animate-bounce-slow { animation: bounce-slow 3s infinite ease-in-out; }
+        .service-card-container {
+            perspective: 1000px;
+            height: 250px;
+            width: 100%;
+            cursor: pointer;
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+        .service-card-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        .service-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .service-card-container:hover .service-card-inner {
+            transform: rotateY(180deg);
+        }
+        .service-card-front, .service-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            box-sizing: border-box;
+            border-radius: 0.75rem;
+        }
+        .service-card-front { background-color: #ffffff; }
+        .service-card-back {
+            transform: rotateY(180deg);
+            background-color: #e0e7ff;
+            color: #3730a3;
+        }
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: 0;
+            animation: float 10s infinite ease-in-out alternate;
+        }
+        .shape-1 { width: 200px; height: 200px; top: 10%; left: -5%; animation-duration: 12s; }
+        .shape-2 { width: 150px; height: 150px; top: 40%; right: -5%; animation-duration: 10s; }
+        .shape-3 { width: 250px; height: 250px; bottom: 5%; left: 20%; animation-duration: 14s; border-radius: 30%; transform: rotate(45deg); }
+        .shape-4 { width: 100px; height: 100px; top: 25%; right: 15%; animation-duration: 8s; border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+        .shape-5 { width: 180px; height: 180px; bottom: 15%; right: 10%; animation-duration: 11s; border-radius: 40% 60% 70% 30% / 50% 60% 40% 50%; }
+        @keyframes float {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(10px, -10px) rotate(5deg); }
+            50% { transform: translate(0, 10px) rotate(0deg); }
+            75% { transform: translate(-10px, -5px) rotate(-5deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
+        }
+        .triangle-diffuse {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(to bottom right, rgba(139, 92, 246, 0.6), rgba(167, 139, 250, 0));
+            filter: blur(100px);
+            z-index: 0;
+        }
+        .triangle-diffuse.top-left { top: -100px; left: -100px; transform: rotate(45deg); clip-path: polygon(0 0, 100% 0, 0 100%); }
+        .triangle-diffuse.bottom-right { bottom: -100px; right: -100px; transform: rotate(45deg); clip-path: polygon(100% 0, 100% 100%, 0 100%); }
+    </style>
+</head>
+<body class="min-h-screen bg-gray-50 font-sans text-gray-800 relative overflow-hidden">
+    <div class="shape shape-1 bg-purple-400 opacity-20"></div>
+    <div class="shape shape-2 bg-pink-400 opacity-20"></div>
+    <div class="shape shape-3 bg-blue-400 opacity-20"></div>
+    <div class="shape shape-4 bg-yellow-400 opacity-20"></div>
+    <div class="shape shape-5 bg-green-400 opacity-20"></div>
+
+    <header class="bg-white shadow-sm p-4 sticky top-0 z-50">
+        <nav class="container mx-auto flex justify-between items-center">
+            <div class="text-2xl font-bold text-indigo-600">TuMarcaDigital</div>
+            <div class="hidden md:flex space-x-6">
+                <a href="#inicio" class="text-gray-600 hover:text-indigo-600 transition-colors">Inicio</a>
+                <a href="#nosotros" class="text-gray-600 hover:text-indigo-600 transition-colors">Nosotros</a>
+                <a href="#servicios" class="text-gray-600 hover:text-indigo-600 transition-colors">Servicios</a>
+                <a href="#contacto" class="text-gray-600 hover:text-indigo-600 transition-colors">Contacto</a>
+            </div>
+            <button class="md:hidden text-gray-600 hover:text-indigo-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+        </nav>
+    </header>
+
+    <section id="inicio" class="relative bg-gradient-to-r from-indigo-500 to-purple-600 text-white py-20 md:py-32 overflow-hidden">
+        <div class="triangle-diffuse top-left"></div>
+        <div class="triangle-diffuse bottom-right"></div>
+        <div class="container mx-auto px-4 text-center relative z-10">
+            <h1 class="text-4xl md:text-6xl font-extrabold leading-tight mb-6 animate-fade-in-up">Impulsa tu Negocio con <span class="text-yellow-300">Marketing Digital Innovador</span></h1>
+            <p class="text-lg md:text-xl mb-10 max-w-3xl mx-auto animate-fade-in-up delay-200">Somos una startup que transforma la visibilidad de PYMES en ventas reales a través de estrategias digitales de vanguardia.</p>
+            <a href="#contacto" class="inline-block bg-white text-indigo-600 font-bold py-3 px-8 rounded-full shadow-lg hover:bg-gray-100 transition-transform transform hover:scale-105 animate-fade-in-up delay-400">¡Hablemos de tu crecimiento!</a>
+        </div>
+    </section>
+
+    <section id="nosotros" class="relative py-16 md:py-24 bg-white overflow-hidden">
+        <div class="container mx-auto px-4 flex flex-col md:flex-row items-center gap-12 animate-fade-in-up relative z-10">
+            <div class="md:w-1/2">
+                <h2 class="text-3xl md:text-4xl font-bold text-indigo-700 mb-6">Nuestra Misión: Innovar para tu Éxito</h2>
+                <p class="text-lg text-gray-700 mb-4">En <span class="font-semibold">TuMarcaDigital</span>, nacimos como una startup con la visión de revolucionar el marketing para pequeñas y medianas empresas. Entendemos los desafíos que enfrentan y por eso, nos dedicamos a ofrecer soluciones digitales creativas y efectivas.</p>
+                <p class="text-lg text-gray-700">Nuestro equipo está compuesto por expertos apasionados por la innovación y el crecimiento. Buscamos constantemente las últimas tendencias y tecnologías para asegurar que tu negocio no solo sea visible, sino que también prospere en el competitivo mundo digital.</p>
+            </div>
+            <div class="md:w-1/2 flex justify-center items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-lightbulb w-32 h-32 text-indigo-500 animate-bounce-slow"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1.3.5 2.6 1.5 3.5.8.8 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/><path d="M10 18a2 2 0 1 1 4 0v4a2 2 0 1 1-4 0v-4z"/></svg>
+            </div>
+        </div>
+    </section>
+
+    <section id="servicios" class="py-16 md:py-24 bg-gray-100">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-3xl md:text-4xl font-bold text-indigo-700 mb-12 animate-fade-in-up">Nuestros Servicios de Marketing Digital</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 animate-fade-in-up delay-200">
+                <div class="service-card-container">
+                    <div class="service-card-inner">
+                        <div class="service-card-front bg-white p-8 rounded-xl shadow-md">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trending-up w-16 h-16 text-indigo-500 mx-auto mb-6"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+                            <h3 class="text-xl font-semibold text-gray-900 mb-4">Estrategias SEO Avanzadas</h3>
+                        </div>
+                        <div class="service-card-back bg-white p-8 rounded-xl shadow-md">
+                            <h3 class="text-xl font-semibold text-gray-900 mb-4">Estrategias SEO Avanzadas</h3>
+                            <p class="text-gray-600">Implementamos estrategias de SEO avanzadas, como el <b>Link Building</b>, para mejorar el posicionamiento de tu página o empresa en buscadores, asegurando una mayor visibilidad y alcance para tu público objetivo.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="service-card-container">
+                    <div class="service-card-inner">
+                        <div class="service-card-front bg-white p-8 rounded-xl shadow-md">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users w-16 h-16 text-green-500 mx-auto mb-6"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                            <h3 class="text-xl font-semibold text-gray-900 mb-4">Gestión de Redes Sociales</h3>
+                        </div>
+                        <div class="service-card-back bg-white p-8 rounded-xl shadow-md">
+                            <h3 class="text-xl font-semibold text-gray-900 mb-4">Gestión de Redes Sociales</h3>
+                            <p class="text-gray-600">Ofrecemos un servicio completo de gestión de redes sociales a través de la creación y publicación de <b>contenido estratégico y atractivo</b>, fomentando la interacción y el crecimiento de tu comunidad online.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="service-card-container">
+                    <div class="service-card-inner">
+                        <div class="service-card-front bg-white p-8 rounded-xl shadow-md">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-lightbulb w-16 h-16 text-yellow-500 mx-auto mb-6"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1.3.5 2.6 1.5 3.5.8.8 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/><path d="M10 18a2 2 0 1 1 4 0v4a2 2 0 1 1-4 0v-4z"/></svg>
+                            <h3 class="text-xl font-semibold text-gray-900 mb-4">Publicidad Digital (SEM)</h3>
+                        </div>
+                        <div class="service-card-back bg-white p-8 rounded-xl shadow-md">
+                            <h3 class="text-xl font-semibold text-gray-900 mb-4">Publicidad Digital (SEM)</h3>
+                            <p class="text-gray-600">Llevamos a cabo la <b>gestión de campañas de comerciales</b> y publicidad pagada a través de aplicaciones de búsqueda como <b>Google Ads</b>, garantizando resultados rápidos y una visibilidad inmediata para tu marca.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="service-card-container">
+                    <div class="service-card-inner">
+                        <div class="service-card-front bg-white p-8 rounded-xl shadow-md">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mail w-16 h-16 text-red-500 mx-auto mb-6"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                            <h3 class="text-xl font-semibold text-gray-900 mb-4">Email Marketing</h3>
+                        </div>
+                        <div class="service-card-back bg-white p-8 rounded-xl shadow-md">
+                            <h3 class="text-xl font-semibold text-gray-900 mb-4">Email Marketing</h3>
+                            <p class="text-gray-600">Diseñamos y ejecutamos <b>campañas de email marketing personalizadas</b> para enviar recordatorios o promociones a tus clientes en momentos estratégicos, optimizando la fidelización y las conversiones.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="service-card-container">
+                    <div class="service-card-inner">
+                        <div class="service-card-front bg-white p-8 rounded-xl shadow-md">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-phone w-16 h-16 text-blue-500 mx-auto mb-6"><path d="M22 16.92v3.08a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3.08a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                            <h3 class="text-xl font-semibold text-gray-900 mb-4">Desarrollo Web & Landing Pages</h3>
+                        </div>
+                        <div class="service-card-back bg-white p-8 rounded-xl shadow-md">
+                            <h3 class="text-xl font-semibold text-gray-900 mb-4">Desarrollo Web & Landing Pages</h3>
+                            <p class="text-gray-600">Creamos <b>páginas web y landing pages personalizadas</b> desde cero, implementando las estrategias de marketing digital antes mencionadas para asegurar una presencia online robusta y orientada a resultados.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="service-card-container">
+                    <div class="service-card-inner">
+                        <div class="service-card-front bg-white p-8 rounded-xl shadow-md">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-lightbulb w-16 h-16 text-purple-500 mx-auto mb-6"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1.3.5 2.6 1.5 3.5.8.8 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/><path d="M10 18a2 2 0 1 1 4 0v4a2 2 0 1 1-4 0v-4z"/></svg>
+                            <h3 class="text-xl font-semibold text-gray-900 mb-4">Marketing de Contenidos</h3>
+                        </div>
+                        <div class="service-card-back bg-white p-8 rounded-xl shadow-md">
+                            <h3 class="text-xl font-semibold text-gray-900 mb-4">Marketing de Contenidos</h3>
+                            <p class="text-gray-600">Desarrollamos <b>contenido de alta calidad y relevante</b> directamente relacionado con la marca en cuestión, diseñado para atraer y captar la atención de clientes interesados, impulsando el engagement y la lealtad.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="bg-indigo-600 text-white py-16 md:py-20 text-center">
+        <div class="container mx-auto px-4 animate-fade-in-up">
+            <h2 class="text-3xl md:text-4xl font-bold mb-6">¿Listo para llevar tu negocio al siguiente nivel?</h2>
+            <p class="text-lg md:text-xl mb-8 max-w-2xl mx-auto">Contacta con nosotros hoy mismo para una consulta gratuita y descubre cómo podemos ayudarte a crecer.</p>
+            <a href="#contacto" class="inline-block bg-white text-indigo-600 font-bold py-3 px-8 rounded-full shadow-lg hover:bg-gray-100 transition-transform transform hover:scale-105">¡Hablemos de tu crecimiento!</a>
+        </div>
+    </section>
+
+    <section id="contacto" class="py-16 md:py-24 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl md:text-4xl font-bold text-indigo-700 text-center mb-12 animate-fade-in-up">Ponte en Contacto</h2>
+            <div class="flex flex-col md:flex-row gap-12 items-center animate-fade-in-up delay-200">
+                <div class="md:w-1/2 bg-gray-50 p-8 rounded-xl shadow-md">
+                    <form class="space-y-6">
+                        <div>
+                            <label for="name" class="block text-sm font-medium text-gray-700">Nombre Completo</label>
+                            <input type="text" id="name" name="name" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Tu Nombre" />
+                        </div>
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-gray-700">Correo Electrónico</label>
+                            <input type="email" id="email" name="email" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="tu.correo@ejemplo.com" />
+                        </div>
+                        <div>
+                            <label for="message" class="block text-sm font-medium text-gray-700">Mensaje</label>
+                            <textarea id="message" name="message" rows="4" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Cuéntanos sobre tu proyecto..."></textarea>
+                        </div>
+                        <button type="submit" class="w-full bg-indigo-600 text-white font-bold py-3 px-6 rounded-md shadow-lg hover:bg-indigo-700 transition-colors transform hover:scale-105">Enviar Mensaje</button>
+                    </form>
+                </div>
+                <div class="md:w-1/2 space-y-8 text-center md:text-left">
+                    <div class="flex items-center justify-center md:justify-start space-x-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-phone w-8 h-8 text-indigo-600"><path d="M22 16.92v3.08a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3.08a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                        <span class="text-lg text-gray-700">+52 6681468067</span>
+                    </div>
+                    <div class="flex items-center justify-center md:justify-start space-x-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mail w-8 h-8 text-indigo-600"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                        <span class="text-lg text-gray-700">visionatuempresa@gmail.com</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-4 text-center text-sm">
+            <p>&copy; 2024 TuMarcaDigital. Todos los derechos reservados.</p>
+            <div class="mt-4 space-x-4">
+                <a href="#" class="hover:text-indigo-400 transition-colors">Política de Privacidad</a>
+                <a href="#" class="hover:text-indigo-400 transition-colors">Términos de Servicio</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
