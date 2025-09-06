@@ -13,6 +13,7 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
         }
         @keyframes fade-in-up {
             from { opacity: 0; transform: translateY(20px); }
@@ -81,33 +82,111 @@
         .shape-1 { width: 200px; height: 200px; top: 10%; left: -5%; animation-duration: 12s; }
         .shape-2 { width: 150px; height: 150px; top: 40%; right: -5%; animation-duration: 10s; }
         .shape-3 { width: 250px; height: 250px; bottom: 5%; left: 20%; animation-duration: 14s; border-radius: 30%; transform: rotate(45deg); }
-        .shape-4 { width: 100px; height: 100px; top: 25%; right: 15%; animation-duration: 8s; border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
-        .shape-5 { width: 180px; height: 180px; bottom: 15%; right: 10%; animation-duration: 11s; border-radius: 40% 60% 70% 30% / 50% 60% 40% 50%; }
-        @keyframes float {
-            0% { transform: translate(0, 0) rotate(0deg); }
-            25% { transform: translate(10px, -10px) rotate(5deg); }
-            50% { transform: translate(0, 10px) rotate(0deg); }
-            75% { transform: translate(-10px, -5px) rotate(-5deg); }
-            100% { transform: translate(0, 0) rotate(0deg); }
+        
+        /* Estilos para el Chatbot */
+        #chat-widget-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
         }
-        .triangle-diffuse {
+        #chat-toggle-button {
+            background-color: #4f46e5;
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: transform 0.2s ease-in-out;
+        }
+        #chat-toggle-button:hover {
+            transform: scale(1.1);
+        }
+        #chat-window {
             position: absolute;
-            width: 300px;
-            height: 300px;
-            background: linear-gradient(to bottom right, rgba(139, 92, 246, 0.6), rgba(167, 139, 250, 0));
-            filter: blur(100px);
-            z-index: 0;
+            bottom: 80px;
+            right: 0;
+            width: 350px;
+            height: 500px;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transform-origin: bottom right;
+            transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+            transform: scale(0);
+            opacity: 0;
         }
-        .triangle-diffuse.top-left { top: -100px; left: -100px; transform: rotate(45deg); clip-path: polygon(0 0, 100% 0, 0 100%); }
-        .triangle-diffuse.bottom-right { bottom: -100px; right: -100px; transform: rotate(45deg); clip-path: polygon(100% 0, 100% 100%, 0 100%); }
+        #chat-window.open {
+            transform: scale(1);
+            opacity: 1;
+        }
+        .chat-header {
+            background-color: #4f46e5;
+            color: white;
+            padding: 1rem;
+            font-weight: bold;
+            text-align: center;
+        }
+        .chat-messages {
+            flex-grow: 1;
+            padding: 1rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .chat-message {
+            padding: 10px 15px;
+            border-radius: 18px;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+        .bot-message {
+            background-color: #f3f4f6;
+            color: #1f2937;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+        .user-message {
+            background-color: #4f46e5;
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+        .chat-options {
+            padding: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            border-top: 1px solid #e5e7eb;
+        }
+        .chat-option-button {
+            background-color: #e0e7ff;
+            color: #4f46e5;
+            border: 1px solid #c7d2fe;
+            padding: 8px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: background-color 0.2s, color 0.2s;
+        }
+        .chat-option-button:hover {
+            background-color: #4f46e5;
+            color: white;
+        }
     </style>
 </head>
 <body class="min-h-screen bg-gray-50 font-sans text-gray-800 relative">
     <div class="shape shape-1 bg-purple-400 opacity-20"></div>
     <div class="shape shape-2 bg-pink-400 opacity-20"></div>
     <div class="shape shape-3 bg-blue-400 opacity-20"></div>
-    <div class="shape shape-4 bg-yellow-400 opacity-20"></div>
-    <div class="shape shape-5 bg-green-400 opacity-20"></div>
 
     <header class="bg-white shadow-sm p-4 sticky top-0 z-50">
         <nav class="container mx-auto flex justify-between items-center">
@@ -116,6 +195,7 @@
                 <a href="#inicio" class="text-gray-600 hover:text-indigo-600 transition-colors">Inicio</a>
                 <a href="#nosotros" class="text-gray-600 hover:text-indigo-600 transition-colors">Nosotros</a>
                 <a href="#servicios" class="text-gray-600 hover:text-indigo-600 transition-colors">Servicios</a>
+                <a href="#paquetes" class="text-gray-600 hover:text-indigo-600 transition-colors">Paquetes</a>
                 <a href="#contacto" class="text-gray-600 hover:text-indigo-600 transition-colors">Contacto</a>
             </div>
             <button id="hamburger-menu" class="md:hidden text-gray-600 hover:text-indigo-600">
@@ -127,8 +207,6 @@
     </header>
 
     <section id="inicio" class="relative bg-gradient-to-r from-indigo-500 to-purple-600 text-white py-20 md:py-32 overflow-hidden">
-        <div class="triangle-diffuse top-left"></div>
-        <div class="triangle-diffuse bottom-right"></div>
         <div class="container mx-auto px-4 text-center relative z-10">
             <h1 class="text-4xl md:text-6xl font-extrabold leading-tight mb-6 animate-fade-in-up">Impulsa tu Negocio con <span class="text-yellow-300">Marketing Digital Innovador</span></h1>
             <p class="text-lg md:text-xl mb-10 max-w-3xl mx-auto animate-fade-in-up delay-200">Somos una startup que transforma la visibilidad de PYMES en ventas reales a través de estrategias digitales de vanguardia.</p>
@@ -153,77 +231,68 @@
         <div class="container mx-auto px-4 text-center">
             <h2 class="text-3xl md:text-4xl font-bold text-indigo-700 mb-12 animate-fade-in-up">Nuestros Servicios de Marketing Digital</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 animate-fade-in-up delay-200">
+                <!-- Service Cards -->
                 <div class="service-card-container">
                     <div class="service-card-inner">
-                        <div class="service-card-front bg-white p-8 rounded-xl shadow-md">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trending-up w-16 h-16 text-indigo-500 mx-auto mb-6"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
-                            <h3 class="text-xl font-semibold text-gray-900 mb-4">Estrategias SEO Avanzadas</h3>
-                        </div>
-                        <div class="service-card-back bg-white p-8 rounded-xl shadow-md">
-                            <h3 class="text-xl font-semibold text-gray-900 mb-4">Estrategias SEO Avanzadas</h3>
-                            <p class="text-gray-600">Implementamos estrategias de SEO avanzadas, como el <b>Link Building</b>, para mejorar el posicionamiento de tu página o empresa en buscadores, asegurando una mayor visibilidad y alcance para tu público objetivo.</p>
-                        </div>
+                        <div class="service-card-front bg-white p-8 rounded-xl shadow-md"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trending-up w-16 h-16 text-indigo-500 mx-auto mb-6"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg><h3 class="text-xl font-semibold text-gray-900 mb-4">Estrategias SEO Avanzadas</h3></div>
+                        <div class="service-card-back bg-white p-8 rounded-xl shadow-md"><h3 class="text-xl font-semibold text-gray-900 mb-4">Estrategias SEO Avanzadas</h3><p class="text-gray-600">Implementamos estrategias de SEO avanzadas, como el <b>Link Building</b>, para mejorar el posicionamiento de tu página o empresa en buscadores.</p></div>
                     </div>
                 </div>
                 <div class="service-card-container">
                     <div class="service-card-inner">
-                        <div class="service-card-front bg-white p-8 rounded-xl shadow-md">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users w-16 h-16 text-green-500 mx-auto mb-6"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                            <h3 class="text-xl font-semibold text-gray-900 mb-4">Gestión de Redes Sociales</h3>
-                        </div>
-                        <div class="service-card-back bg-white p-8 rounded-xl shadow-md">
-                            <h3 class="text-xl font-semibold text-gray-900 mb-4">Gestión de Redes Sociales</h3>
-                            <p class="text-gray-600">Ofrecemos un servicio completo de gestión de redes sociales a través de la creación y publicación de <b>contenido estratégico y atractivo</b>, fomentando la interacción y el crecimiento de tu comunidad online.</p>
-                        </div>
+                        <div class="service-card-front bg-white p-8 rounded-xl shadow-md"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users w-16 h-16 text-green-500 mx-auto mb-6"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><h3 class="text-xl font-semibold text-gray-900 mb-4">Gestión de Redes Sociales</h3></div>
+                        <div class="service-card-back bg-white p-8 rounded-xl shadow-md"><h3 class="text-xl font-semibold text-gray-900 mb-4">Gestión de Redes Sociales</h3><p class="text-gray-600">Ofrecemos un servicio completo de gestión de redes sociales a través de la creación y publicación de <b>contenido estratégico y atractivo</b>.</p></div>
                     </div>
                 </div>
                 <div class="service-card-container">
                     <div class="service-card-inner">
-                        <div class="service-card-front bg-white p-8 rounded-xl shadow-md">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-lightbulb w-16 h-16 text-yellow-500 mx-auto mb-6"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1.3.5 2.6 1.5 3.5.8.8 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/><path d="M10 18a2 2 0 1 1 4 0v4a2 2 0 1 1-4 0v-4z"/></svg>
-                            <h3 class="text-xl font-semibold text-gray-900 mb-4">Publicidad Digital (SEM)</h3>
-                        </div>
-                        <div class="service-card-back bg-white p-8 rounded-xl shadow-md">
-                            <h3 class="text-xl font-semibold text-gray-900 mb-4">Publicidad Digital (SEM)</h3>
-                            <p class="text-gray-600">Llevamos a cabo la <b>gestión de campañas de comerciales</b> y publicidad pagada a través de aplicaciones de búsqueda como <b>Google Ads</b>, garantizando resultados rápidos y una visibilidad inmediata para tu marca.</p>
-                        </div>
+                        <div class="service-card-front bg-white p-8 rounded-xl shadow-md"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-lightbulb w-16 h-16 text-yellow-500 mx-auto mb-6"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1.3.5 2.6 1.5 3.5.8.8 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/><path d="M10 18a2 2 0 1 1 4 0v4a2 2 0 1 1-4 0v-4z"/></svg><h3 class="text-xl font-semibold text-gray-900 mb-4">Publicidad Digital (SEM)</h3></div>
+                        <div class="service-card-back bg-white p-8 rounded-xl shadow-md"><h3 class="text-xl font-semibold text-gray-900 mb-4">Publicidad Digital (SEM)</h3><p class="text-gray-600">Llevamos a cabo la <b>gestión de campañas de comerciales</b> y publicidad pagada a través de aplicaciones como <b>Google Ads</b>.</p></div>
                     </div>
                 </div>
-                <div class="service-card-container">
+                 <div class="service-card-container">
                     <div class="service-card-inner">
-                        <div class="service-card-front bg-white p-8 rounded-xl shadow-md">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mail w-16 h-16 text-red-500 mx-auto mb-6"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-                            <h3 class="text-xl font-semibold text-gray-900 mb-4">Email Marketing</h3>
-                        </div>
-                        <div class="service-card-back bg-white p-8 rounded-xl shadow-md">
-                            <h3 class="text-xl font-semibold text-gray-900 mb-4">Email Marketing</h3>
-                            <p class="text-gray-600">Diseñamos y ejecutamos <b>campañas de email marketing personalizadas</b> para enviar recordatorios o promociones a tus clientes en momentos estratégicos, optimizando la fidelización y las conversiones.</p>
-                        </div>
+                        <div class="service-card-front bg-white p-8 rounded-xl shadow-md"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mail w-16 h-16 text-red-500 mx-auto mb-6"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><h3 class="text-xl font-semibold text-gray-900 mb-4">Email Marketing</h3></div>
+                        <div class="service-card-back bg-white p-8 rounded-xl shadow-md"><h3 class="text-xl font-semibold text-gray-900 mb-4">Email Marketing</h3><p class="text-gray-600">Diseñamos y ejecutamos <b>campañas de email marketing personalizadas</b> para optimizar la fidelización y las conversiones.</p></div>
                     </div>
                 </div>
-                <div class="service-card-container">
+                 <div class="service-card-container">
                     <div class="service-card-inner">
-                        <div class="service-card-front bg-white p-8 rounded-xl shadow-md">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-phone w-16 h-16 text-blue-500 mx-auto mb-6"><path d="M22 16.92v3.08a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3.08a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-                            <h3 class="text-xl font-semibold text-gray-900 mb-4">Desarrollo Web & Landing Pages</h3>
-                        </div>
-                        <div class="service-card-back bg-white p-8 rounded-xl shadow-md">
-                            <h3 class="text-xl font-semibold text-gray-900 mb-4">Desarrollo Web & Landing Pages</h3>
-                            <p class="text-gray-600">Creamos <b>páginas web y landing pages personalizadas</b> desde cero, implementando las estrategias de marketing digital antes mencionadas para asegurar una presencia online robusta y orientada a resultados.</p>
-                        </div>
+                        <div class="service-card-front bg-white p-8 rounded-xl shadow-md"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-phone w-16 h-16 text-blue-500 mx-auto mb-6"><path d="M22 16.92v3.08a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3.08a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg><h3 class="text-xl font-semibold text-gray-900 mb-4">Desarrollo Web & Landing Pages</h3></div>
+                        <div class="service-card-back bg-white p-8 rounded-xl shadow-md"><h3 class="text-xl font-semibold text-gray-900 mb-4">Desarrollo Web & Landing Pages</h3><p class="text-gray-600">Creamos <b>páginas web y landing pages personalizadas</b> desde cero para asegurar una presencia online robusta y orientada a resultados.</p></div>
                     </div>
                 </div>
-                <div class="service-card-container">
+                 <div class="service-card-container">
                     <div class="service-card-inner">
-                        <div class="service-card-front bg-white p-8 rounded-xl shadow-md">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-lightbulb w-16 h-16 text-purple-500 mx-auto mb-6"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1.3.5 2.6 1.5 3.5.8.8 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/><path d="M10 18a2 2 0 1 1 4 0v4a2 2 0 1 1-4 0v-4z"/></svg>
-                            <h3 class="text-xl font-semibold text-gray-900 mb-4">Marketing de Contenidos</h3>
-                        </div>
-                        <div class="service-card-back bg-white p-8 rounded-xl shadow-md">
-                            <h3 class="text-xl font-semibold text-gray-900 mb-4">Marketing de Contenidos</h3>
-                            <p class="text-gray-600">Desarrollamos <b>contenido de alta calidad y relevante</b> directamente relacionado con la marca en cuestión, diseñado para atraer y captar la atención de clientes interesados, impulsando el engagement y la lealtad.</p>
-                        </div>
+                        <div class="service-card-front bg-white p-8 rounded-xl shadow-md"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-lightbulb w-16 h-16 text-purple-500 mx-auto mb-6"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1.3.5 2.6 1.5 3.5.8.8 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/><path d="M10 18a2 2 0 1 1 4 0v4a2 2 0 1 1-4 0v-4z"/></svg><h3 class="text-xl font-semibold text-gray-900 mb-4">Marketing de Contenidos</h3></div>
+                        <div class="service-card-back bg-white p-8 rounded-xl shadow-md"><h3 class="text-xl font-semibold text-gray-900 mb-4">Marketing de Contenidos</h3><p class="text-gray-600">Desarrollamos <b>contenido de alta calidad y relevante</b> para atraer y captar la atención de clientes interesados.</p></div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="paquetes" class="py-16 md:py-24 bg-white">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-3xl md:text-4xl font-bold text-indigo-700 mb-4 animate-fade-in-up">Planes a tu Medida</h2>
+            <p class="text-lg text-gray-600 mb-12 max-w-2xl mx-auto animate-fade-in-up delay-200">Elige el paquete que mejor se adapte a tus objetivos y presupuesto. ¡Estamos listos para ayudarte a crecer!</p>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start animate-fade-in-up delay-400">
+                <!-- Package Cards -->
+                <div class="bg-gray-50 p-8 rounded-xl shadow-lg border border-gray-200 flex flex-col h-full">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-2">Emprendedor Digital</h3><p class="text-gray-500 mb-6">Para una presencia online básica y efectiva.</p><p class="text-4xl font-extrabold text-indigo-600 mb-1">$3,000</p><p class="text-gray-500 mb-6">- $8,000 MXN / mensual</p>
+                    <div class="text-left space-y-4 mb-8 flex-grow"><div class="bg-white p-4 rounded-lg border-l-4 border-indigo-500"><h4 class="font-semibold">Gestión de Redes Sociales</h4><ul class="list-disc list-inside text-sm text-gray-600 mt-2"><li>Estrategia para 2 plataformas</li><li>3-4 publicaciones por semana</li></ul></div><div class="bg-white p-4 rounded-lg border-l-4 border-indigo-500"><h4 class="font-semibold">Marketing de Contenidos</h4><ul class="list-disc list-inside text-sm text-gray-600 mt-2"><li>Creación de 4 artículos o posts de blog al mes</li></ul></div></div>
+                    <a href="#contacto" class="mt-auto w-full block text-center bg-indigo-500 text-white font-bold py-3 px-6 rounded-md hover:bg-indigo-700 transition-colors">Solicitar Asesoría</a>
+                </div>
+                <div class="bg-indigo-600 text-white p-8 rounded-xl shadow-2xl transform lg:scale-110 relative flex flex-col h-full">
+                    <span class="absolute top-0 right-0 bg-yellow-300 text-indigo-700 text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-lg -mt-px -mr-px">MÁS POPULAR</span>
+                    <h3 class="text-2xl font-bold mb-2">Impulso de Crecimiento</h3><p class="text-indigo-200 mb-6">Para empresas que quieren acelerar su expansión.</p><p class="text-4xl font-extrabold mb-1">$10,000</p><p class="text-indigo-200 mb-6">- $20,000 MXN / mensual</p>
+                    <div class="text-left space-y-4 mb-8 flex-grow"><div class="bg-indigo-500 p-4 rounded-lg border-l-4 border-yellow-300"><h4 class="font-semibold">Todo en Emprendedor, y además:</h4><ul class="list-disc list-inside text-sm text-indigo-100 mt-2"><li>Gestión de 3 plataformas</li><li>8 artículos de blog optimizados para SEO</li><li>Campaña de Google Ads</li><li>Boletín mensual por email</li></ul></div></div>
+                    <a href="#contacto" class="mt-auto w-full block text-center bg-white text-indigo-600 font-bold py-3 px-6 rounded-md hover:bg-gray-100 transition-colors">Solicitar Asesoría</a>
+                </div>
+                <div class="bg-gray-50 p-8 rounded-xl shadow-lg border border-gray-200 flex flex-col h-full">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-2">Líder de Mercado</h3><p class="text-gray-500 mb-6">La solución completa para dominar tu industria.</p><p class="text-4xl font-extrabold text-indigo-600 mb-1">$25,000</p><p class="text-gray-500 mb-6">- $50,000+ MXN / mensual</p>
+                    <div class="text-left space-y-4 mb-8 flex-grow"><div class="bg-white p-4 rounded-lg border-l-4 border-indigo-500"><h4 class="font-semibold">Todo en Impulso, y además:</h4><ul class="list-disc list-inside text-sm text-gray-600 mt-2"><li>Auditoría SEO completa</li><li>Múltiples campañas SEM</li><li>Embudos de email automatizados</li><li>Desarrollo de Landing Pages</li></ul></div></div>
+                    <a href="#contacto" class="mt-auto w-full block text-center bg-indigo-500 text-white font-bold py-3 px-6 rounded-md hover:bg-indigo-700 transition-colors">Solicitar Asesoría</a>
                 </div>
             </div>
         </div>
@@ -237,36 +306,44 @@
         </div>
     </section>
 
+    <!-- ========= SECCIÓN DE CONTACTO MEJORADA ========= -->
     <section id="contacto" class="py-16 md:py-24 bg-white">
         <div class="container mx-auto px-4">
-            <h2 class="text-3xl md:text-4xl font-bold text-indigo-700 text-center mb-12 animate-fade-in-up">Ponte en Contacto</h2>
-            <div class="flex flex-col md:flex-row gap-12 items-center animate-fade-in-up delay-200">
-                <div class="md:w-1/2 bg-gray-50 p-8 rounded-xl shadow-md">
-                    <form action="https://formspree.io/f/xnnzgwng" method="POST" class="space-y-6">
+            <h2 class="text-3xl md:text-4xl font-bold text-indigo-700 text-center mb-4 animate-fade-in-up">Hablemos de tu Proyecto</h2>
+            <p class="text-lg text-gray-600 text-center mb-12 max-w-2xl mx-auto animate-fade-in-up delay-200">
+                Usa nuestro chat para resolver dudas rápidas o llena el formulario para una cotización detallada.
+            </p>
+            <div class="max-w-5xl mx-auto bg-gray-50 rounded-xl shadow-lg flex flex-col md:flex-row items-center animate-fade-in-up delay-400">
+                <div class="md:w-1/2 p-8 md:p-12">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4">Información de Contacto</h3>
+                    <p class="text-gray-600 mb-8">Estamos disponibles para discutir tu proyecto. ¡No dudes en contactarnos!</p>
+                    <div class="space-y-6">
+                        <div class="flex items-center space-x-4">
+                            <div class="bg-indigo-100 p-3 rounded-full"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-phone text-indigo-600"><path d="M22 16.92v3.08a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3.08a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div>
+                            <span class="text-lg text-gray-700">+52 6681468067</span>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                             <div class="bg-indigo-100 p-3 rounded-full"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mail text-indigo-600"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+                            <span class="text-lg text-gray-700">visionatuempresa@gmail.com</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="md:w-1/2 p-8 md:p-12 bg-white rounded-r-xl">
+                     <form action="https://formspree.io/f/xnnzgwng" method="POST" class="space-y-6">
                         <div>
                             <label for="name" class="block text-sm font-medium text-gray-700">Nombre Completo</label>
-                            <input type="text" id="name" name="name" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Tu Nombre" />
+                            <input type="text" id="name" name="name" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Tu Nombre" required/>
                         </div>
                         <div>
                             <label for="email" class="block text-sm font-medium text-gray-700">Correo Electrónico</label>
-                            <input type="email" id="email" name="email" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="tu.correo@ejemplo.com" />
+                            <input type="email" id="email" name="email" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="tu.correo@ejemplo.com" required/>
                         </div>
                         <div>
-                            <label for="message" class="block text-sm font-medium text-gray-700">Mensaje</label>
-                            <textarea id="message" name="message" rows="4" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Cuéntanos sobre tu proyecto..."></textarea>
+                            <label for="message" class="block text-sm font-medium text-gray-700">Cuéntanos sobre tu negocio</label>
+                            <textarea id="message" name="message" rows="4" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="¿A qué se dedica tu empresa? ¿Qué objetivos tienes?"></textarea>
                         </div>
-                        <button type="submit" class="w-full bg-indigo-600 text-white font-bold py-3 px-6 rounded-md shadow-lg hover:bg-indigo-700 transition-colors transform hover:scale-105">Enviar Mensaje</button>
+                        <button type="submit" class="w-full bg-indigo-600 text-white font-bold py-3 px-6 rounded-md shadow-lg hover:bg-indigo-700 transition-colors transform hover:scale-105">Solicitar Cotización</button>
                     </form>
-                </div>
-                <div class="md:w-1/2 space-y-8 text-center md:text-left">
-                    <div class="flex items-center justify-center md:justify-start space-x-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-phone w-8 h-8 text-indigo-600"><path d="M22 16.92v3.08a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3.08a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-                        <span class="text-lg text-gray-700">+52 6681468067</span>
-                    </div>
-                    <div class="flex items-center justify-center md:justify-start space-x-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mail w-8 h-8 text-indigo-600"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-                        <span class="text-lg text-gray-700">visionatuempresa@gmail.com</span>
-                    </div>
                 </div>
             </div>
         </div>
@@ -281,14 +358,196 @@
             </div>
         </div>
     </footer>
+
+    <!-- ========= WIDGET DEL CHATBOT ========= -->
+    <div id="chat-widget-container">
+        <div id="chat-window">
+            <div class="chat-header">Asistente Virtual</div>
+            <div class="chat-messages" id="chat-messages">
+                <!-- Los mensajes del chat se insertarán aquí -->
+            </div>
+            <div class="chat-options" id="chat-options">
+                 <!-- Las opciones del chat se insertarán aquí -->
+            </div>
+        </div>
+        <div id="chat-toggle-button">
+             <svg id="chat-icon-open" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z"></path></svg>
+             <svg id="chat-icon-close" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </div>
+    </div>
     
     <script>
+        // Script para el menú hamburguesa
         document.getElementById('hamburger-menu').addEventListener('click', function() {
             var menu = document.getElementById('nav-menu');
             menu.classList.toggle('hidden');
             menu.classList.toggle('flex');
             menu.classList.toggle('flex-col');
         });
+
+        // ========= LÓGICA DEL CHATBOT MEJORADA =========
+        const chatWindow = document.getElementById('chat-window');
+        const chatToggleButton = document.getElementById('chat-toggle-button');
+        const chatIconOpen = document.getElementById('chat-icon-open');
+        const chatIconClose = document.getElementById('chat-icon-close');
+        const chatMessages = document.getElementById('chat-messages');
+        const chatOptions = document.getElementById('chat-options');
+
+        let chatOpen = false;
+
+        const conversation = {
+            start: {
+                text: "¡Hola! 👋 Soy tu asistente virtual. Estoy aquí para ayudarte a encontrar el plan perfecto. ¿Qué te gustaría hacer?",
+                options: [
+                    { text: "Ver paquetes", next: "showPackages" },
+                    { text: "Tengo una pregunta", next: "askQuestion" },
+                    { text: "¿Qué paquete me conviene?", next: "handleRecommendation" }
+                ]
+            },
+            showPackages: {
+                text: "¡Claro! Tenemos 3 paquetes diseñados para cada etapa de crecimiento. ¿Cuál te interesa más?",
+                options: [
+                    { text: "Emprendedor Digital", next: "packageSelected" },
+                    { text: "Impulso de Crecimiento", next: "packageSelected" },
+                    { text: "Líder de Mercado", next: "packageSelected" },
+                    { text: "Tengo otra duda", next: "askQuestion" }
+                ]
+            },
+            askQuestion: {
+                text: "Entendido. ¿Sobre qué tema es tu pregunta? Puedo darte información preliminar.",
+                options: [
+                    { text: "Precios y negociación", next: "handlePricing" },
+                    { text: "Personalizar un paquete", next: "handleCustomization" },
+                    { text: "Hablar con un humano", next: "redirectToForm" },
+                    { text: "Volver al inicio", next: "start" }
+                ]
+            },
+            handlePricing: {
+                text: "Nuestros precios son rangos flexibles que se ajustan al tamaño y necesidades de tu proyecto. Siempre estamos abiertos a discutirlo para encontrar una solución que funcione para ambos. La mejor manera de obtener un precio final es agendando una llamada.",
+                options: [
+                    { text: "Agendar llamada", next: "redirectToForm" },
+                    { text: "Tengo otra pregunta", next: "askQuestion" }
+                ]
+            },
+            handleCustomization: {
+                text: "¡Por supuesto! Los paquetes son una guía, pero podemos crear un plan 100% a tu medida, eligiendo solo los servicios que necesitas. Para hacer una cotización personalizada, necesitamos conocer tu proyecto.",
+                options: [
+                    { text: "Solicitar cotización", next: "redirectToForm" },
+                    { text: "Tengo otra pregunta", next: "askQuestion" }
+                ]
+            },
+            handleRecommendation: {
+                text: "¡Con gusto te oriento! ¿En qué etapa se encuentra tu negocio?",
+                options: [
+                    { text: "Estoy empezando", next: "recommendEmprendedor" },
+                    { text: "Ya vendo, quiero crecer más", next: "recommendImpulso" },
+                    { text: "Busco ser líder en mi sector", next: "recommendLider" }
+                ]
+            },
+            recommendEmprendedor: {
+                text: "Para empezar, el paquete 'Emprendedor Digital' es ideal. Te da una base sólida en redes sociales y contenido sin un gran presupuesto. ¿Quieres que un asesor te contacte para hablar de este plan?",
+                options: [
+                    { text: "Sí, contáctenme", next: "redirectToForm" },
+                    { text: "Ver otros paquetes", next: "showPackages" }
+                ]
+            },
+            recommendImpulso: {
+                text: "El paquete 'Impulso de Crecimiento' parece perfecto para ti. Agrega publicidad y email marketing para acelerar tus resultados. ¿Te gustaría que un experto te explique cómo funcionaría para tu negocio?",
+                options: [
+                    { text: "Sí, quiero saber más", next: "redirectToForm" },
+                    { text: "Ver otros paquetes", next: "showPackages" }
+                ]
+            },
+            recommendLider: {
+                 text: "Si buscas dominar tu mercado, el paquete 'Líder de Mercado' es la solución definitiva, con SEO avanzado y estrategias completas. ¿Agendamos una llamada estratégica para detallar el plan?",
+                options: [
+                    { text: "Agendar llamada estratégica", next: "redirectToForm" },
+                    { text: "Ver otros paquetes", next: "showPackages" }
+                ]
+            },
+            packageSelected: {
+                text: "¡Excelente elección! Para darte una cotización precisa y discutir cómo ese paquete puede ayudar a tu negocio, lo ideal es que nos dejes tus datos.",
+                options: [
+                     { text: "Ok, contáctenme", next: "redirectToForm" },
+                     { text: "Quiero ver otro paquete", next: "showPackages" },
+                ]
+            },
+            redirectToForm: {
+                text: "¡Perfecto! Te estoy redirigiendo a nuestro formulario de contacto. Llena tus datos y un experto se comunicará contigo muy pronto.",
+                action: () => {
+                    window.location.href = '#contacto';
+                    toggleChat();
+                }
+            }
+        };
+
+        const toggleChat = () => {
+            chatOpen = !chatOpen;
+            chatWindow.classList.toggle('open');
+            chatIconOpen.classList.toggle('hidden');
+            chatIconClose.classList.toggle('hidden');
+            if (chatOpen && chatMessages.children.length === 0) {
+                startChat();
+            }
+        };
+
+        const startChat = () => {
+            chatMessages.innerHTML = '';
+            handleConversationNode('start');
+        };
+        
+        const handleConversationNode = (nodeKey) => {
+            const node = conversation[nodeKey];
+            
+            if (node.text) {
+                addBotMessage(node.text);
+            }
+
+            chatOptions.innerHTML = '';
+            if (node.options && node.options.length > 0) {
+                node.options.forEach(option => {
+                    const button = document.createElement('button');
+                    button.classList.add('chat-option-button');
+                    button.textContent = option.text;
+                    button.onclick = () => handleUserChoice(option);
+                    chatOptions.appendChild(button);
+                });
+            } else {
+                 setTimeout(() => {
+                    const button = document.createElement('button');
+                    button.classList.add('chat-option-button');
+                    button.textContent = "Reiniciar chat";
+                    button.onclick = () => startChat();
+                    chatOptions.appendChild(button);
+                }, 2000);
+            }
+            
+            if (node.action) {
+                setTimeout(node.action, 1000);
+            }
+        };
+
+        const handleUserChoice = (option) => {
+            addUserMessage(option.text);
+            chatOptions.innerHTML = '<p class="text-sm text-gray-500 w-full text-center">...</p>';
+            setTimeout(() => {
+                handleConversationNode(option.next);
+            }, 800);
+        };
+        
+        const addMessage = (text, sender) => {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('chat-message', sender === 'bot' ? 'bot-message' : 'user-message');
+            messageElement.textContent = text;
+            chatMessages.appendChild(messageElement);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        };
+        
+        const addBotMessage = (text) => addMessage(text, 'bot');
+        const addUserMessage = (text) => addMessage(text, 'user');
+
+        chatToggleButton.addEventListener('click', toggleChat);
     </script>
 </body>
 </html>
+
